@@ -7,6 +7,7 @@ bp = Blueprint('main', __name__)
 def generate():
     data = request.get_json()
     prompt = data.get('prompt', '')
+    image = data.get('image')
     if not prompt:
         return jsonify({'error': 'Missing prompt'}), 400
-    return Response(generate_stream(prompt), mimetype='text/plain')
+    return Response(generate_stream(prompt, image=image), mimetype='text/plain')

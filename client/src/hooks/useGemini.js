@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 
 export default function useGemini() {
   const [prompt, setPrompt] = useState("");
+  const [image, setImage] = useState(null);
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
   const responseRef = useRef("");
@@ -15,7 +16,7 @@ export default function useGemini() {
       const res = await fetch("http://localhost:5000/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt })
+        body: JSON.stringify(image ? { prompt, image } : { prompt })
       });
       if (!res.ok) throw new Error("API error");
       const reader = res.body.getReader();
@@ -35,6 +36,8 @@ export default function useGemini() {
   return {
     prompt,
     setPrompt,
+    image,
+    setImage,
     response,
     loading,
     sendPrompt

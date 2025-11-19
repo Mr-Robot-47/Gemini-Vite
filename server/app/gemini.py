@@ -16,8 +16,11 @@ def get_model():
     return genai.GenerativeModel("gemini-2.5-flash-lite")
 
 
-def generate_stream(prompt):
+def generate_stream(prompt, image=None):
     m = get_model()
     m.start_chat()
-    for chunk in m.generate_content(prompt, stream=True):
+    content = {"parts": [prompt]}
+    if image is not None:
+        content["parts"].append({"inline_data": {"mime_type": "image/jpeg", "data": image}})
+    for chunk in m.generate_content(content, stream=True):
         yield chunk.text
