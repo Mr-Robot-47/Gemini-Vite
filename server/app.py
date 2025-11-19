@@ -1,18 +1,24 @@
 import os
 from dotenv import load_dotenv
-from google import genai
-from google.genai import types
+import google.generativeai as genai
 
 load_dotenv()
-
 api_key = os.getenv("API_KEY")
 
-client = genai.Client(api_key=api_key)
+if not api_key:
+    raise ValueError("Missing API_KEY in environment. Add it to your .env or pass the correct key name.")
 
-response = client.models.generate_content(
-    model="gemini-2.5-flash-lite",
-    contents="Tell me about a lion",
-)
+genai.configure(api_key=api_key)
+model = genai.GenerativeModel("gemini-2.5-flash-lite")
 
+def stream_content():
+    response = model.start_chat()
+    stream = model.generate_content(
+        "Do you know horcruxes",
+        stream=True,
+    )
+    for chunk in stream:
+        print(chunk.text, end="", flush=True)
 
-print(response.text)
+if __name__ == "__main__":
+    stream_content()
